@@ -1,202 +1,164 @@
 # WORSHIP Mascot Robot
-## README — Arquitectura de software y primera acción autónoma
 
-**Proyecto:** WORSHIP Mascot Robot  
-**Objetivo inicial:** implementar la primera acción autónoma del robot: parpadear dos veces.  
-**Arquitectura:** Astro + React, Python + FastAPI y un módulo de control de comportamiento dirigido por IA.
+## Visión General del Proyecto
 
----
+Plataforma de interacción que combina representación visual animada, lógica de comportamiento y arquitectura backend preparada para IA y control de componentes físicos.
 
-## 1. Descripción del proyecto
+## Arquitectura del Sistema
 
-La mascota robótica de WORSHIP es una plataforma de interacción que combina una representación visual animada, lógica de comportamiento y una arquitectura backend preparada para incorporar inteligencia artificial y controlar componentes físicos.
+### 1. Frontend (Astro + React)
+- **Responsabilidad:** Interfaz y representación visual de la mascota
+- **Funciones:**
+  - Mostrar rostro y ojos del robot
+  - Ejecutar animaciones y transiciones
+  - Gestionar estados visuales (reposo, parpadeo, expresiones)
+  - Recibir instrucciones del backend
+  - Separar lógica visual de toma de decisiones
 
-El objetivo es que el robot no se limite a mostrar animaciones predeterminadas, sino que pueda interpretar instrucciones, seleccionar comportamientos y ejecutar acciones de forma controlada.
+### 2. Backend (Python + FastAPI)
+- **Responsabilidad:** Coordinar acciones y comunicar módulos del sistema
+- **Funciones:**
+  - Exponer API para recibir instrucciones
+  - Validar acciones solicitadas
+  - Coordinar módulo de comportamiento
+  - Integrar modelo de IA cuando corresponda
+  - Entregar instrucciones estructuradas al frontend
+  - Preparar integración futura con MQTT y dispositivos físicos
 
-La primera acción será el **parpadeo autónomo doble**, que permitirá validar el flujo entre la lógica de comportamiento, el backend y la representación visual.
+### 3. Componentes Visuales (emociones/)
+- **Responsabilidad:** Almacenar assets faciales básicos
+- **Contenido:**
+  - `boca/boca.png` - Componente de boca
+  - `nariz/nariz.png` - Componente de nariz
+  - `ojo-derecho/ojo-derecho.png` - Componente de ojo derecho
+  - `ojo-izquierdo/ojo-izquierdo.png` - Componente de ojo izquierdo
+  - *[Quinto componente por definir]*
 
-## 2. Primera acción autónoma: doble parpadeo
+## Endpoints Principales
 
-La primera funcionalidad consiste en cerrar y abrir los ojos dos veces, ejecutando una secuencia visual definida.
+### 1. Endpoint de Rostro Inicial
+**Propósito:** Proporcionar componentes faciales básicos para renderizado inicial
+**Endpoint:** `GET /api/v1/face/initial`
+**Funcionalidad:**
+- Lee componentes de la carpeta `emociones/`
+- Los envía en formato JSON como imágenes base64
+- Se envían en grupos de 5 elementos (4 componentes actuales + 1 por definir)
+- Proporciona el estado visual base del robot
 
-**Comportamiento esperado:**
+### 2. Endpoint de Parpadeo
+**Propósito:** Interpretar instrucciones de texto y generar acciones de parpadeo
+**Endpoint:** `POST /api/v1/robot/interpret`
+**Tecnologías:** Python, FastAPI, Groq, Pydantic
+**Flujo:**
+1. Usuario envía texto: `{"text": "Parpadea dos veces"}`
+2. Backend procesa con Groq para identificar intención y cantidad
+3. Servicio de animación selecciona variante visual apropiada
+4. Retorna JSON con instrucciones de parpadeo
+5. Frontend ejecuta la animación correspondiente
 
-1. El sistema detecta o recibe una condición que activa el comportamiento.
-2. El módulo de control selecciona la acción `blink_twice`.
-3. El backend valida y envía la instrucción al frontend.
-4. React ejecuta la animación correspondiente.
-5. El robot recupera su estado visual normal.
+## Arquitectura Backend Detallada
 
-La acción debe poder activarse mediante una instrucción de prueba y, posteriormente, mediante eventos autónomos definidos por el sistema.
+### Estructura MVC
+- **Models:** Esquemas Pydantic para validación de datos
+- **Views:** Representación de respuestas HTTP en JSON
+- **Controllers:** Recepción y coordinación de solicitudes
+- **Services:** 
+  - `groq_service.py` - Comunicación con Groq e interpretación de texto
+  - `animation_service.py` - Selección de variantes y validación de cantidad
+- **Repositories:** Consulta del catálogo de animaciones disponibles
+- **animations/:** Recursos visuales locales para parpadeo (3 variantes con 3 frames cada una)
 
-## 3. Arquitectura tecnológica
-
-### Frontend: Astro + React
-
-Responsable de la interfaz y de la representación visual de la mascota.
-
-Funciones:
-- Mostrar el rostro y los ojos del robot.
-- Ejecutar animaciones y transiciones.
-- Gestionar estados visuales como reposo, parpadeo y expresiones.
-- Recibir instrucciones del backend.
-- Separar la lógica visual de la toma de decisiones.
-
-### Backend: Python + FastAPI
-
-Responsable de coordinar las acciones y comunicar los módulos del sistema.
-
-Funciones:
-- Exponer una API para recibir instrucciones.
-- Validar las acciones solicitadas.
-- Coordinar el módulo de comportamiento.
-- Integrar el modelo de IA cuando corresponda.
-- Entregar al frontend instrucciones estructuradas.
-- Preparar la integración futura con MQTT y dispositivos físicos.
-
-### Módulo de inteligencia artificial
-
-Será responsable de interpretar el contexto y proponer la acción adecuada.
-
-Por ejemplo, una entrada textual como «saluda al usuario» podría transformarse en una instrucción de comportamiento como `blink_twice` o, posteriormente, en una secuencia más compleja.
-
-El modelo no debe modificar directamente la interfaz ni ejecutar código arbitrario. Su salida debe validarse mediante el backend antes de convertirse en una acción.
-
-## 4. ¿Microservicios independientes o un solo servicio?
-
-Para la primera versión se recomienda una **arquitectura modular dentro de un único backend FastAPI**.
-
-Esto permite mantener responsabilidades separadas sin introducir la complejidad de desplegar y comunicar múltiples servicios desde el inicio.
-
-| Componente | Responsabilidad | Despliegue inicial |
-|---|---|---|
-| Astro + React | Interfaz y animaciones | Frontend independiente |
-| API FastAPI | Recepción y coordinación de acciones | Backend único |
-| Módulo de comportamiento | Selección y validación de acciones | Módulo Python |
-| Adaptador de IA | Interpretación del texto y propuesta de acciones | Módulo Python |
-| Adaptador MQTT | Comunicación con hardware físico | Integración futura |
-
-**Importante:** separar módulos no significa que sean microservicios. Un microservicio tiene su propio proceso de ejecución y despliegue, y se comunica con otros componentes mediante interfaces definidas.
-
-La separación física del modelo de IA solo será necesaria si sus requisitos de cómputo, escalabilidad, seguridad o mantenimiento lo justifican.
-
-## 5. Flujo de ejecución
-
-El flujo inicial será:
-
-1. Se recibe un texto o evento.
-2. El backend determina la acción permitida, con apoyo del modelo de IA cuando sea necesario.
-3. El módulo de comportamiento genera una instrucción estructurada.
-4. FastAPI devuelve la instrucción al frontend.
-5. React reproduce la animación.
-6. El sistema puede registrar el resultado para diagnóstico.
-
-Ejemplo de instrucción:
-
-```json
-{
-  "action": "blink_twice",
-  "target": "eyes",
-  "parameters": {
-    "count": 2,
-    "duration_ms": 250
-  }
-}
-```
-
-Esta instrucción representa el contrato de comunicación entre backend y frontend. El tiempo indicado es una configuración inicial de referencia, no una duración obligatoria.
-
-## 6. API inicial
-
-### `POST /robot/action`
-
-Solicita la ejecución de una acción visual permitida.
-
-Ejemplo de solicitud:
-
-```json
-{
-  "action": "blink_twice"
-}
-```
-
-Ejemplo de respuesta:
-
-```json
-{
-  "accepted": true,
-  "action": "blink_twice",
-  "target": "eyes",
-  "parameters": {
-    "count": 2,
-    "duration_ms": 250
-  }
-}
-```
-
-La respuesta confirma que la acción fue aceptada por el backend; no implica que la animación ya haya terminado.
-
-En esta primera versión, el frontend puede ejecutar la animación a partir de la respuesta HTTP. Si posteriormente se necesitan eventos continuos, estados en tiempo real o múltiples clientes, se podrá incorporar WebSocket o un mecanismo de mensajería apropiado.
-
-## 7. Estructura de carpetas propuesta
-
+### Estructura de Carpetas
 ```text
 worship-mascot-robot/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── RobotFace.tsx
-│   │   ├── animations/
-│   │   │   └── blink.ts
-│   │   ├── services/
-│   │   │   └── robotApi.ts
-│   │   └── pages/
-│   └── package.json
-│
+├── emociones/
+│   ├── boca/
+│   │   └── boca.png
+│   ├── nariz/
+│   │   └── nariz.png
+│   ├── ojo-derecho/
+│   │   └── ojo-derecho.png
+│   └── ojo-izquierdo/
+│       └── ojo-izquierdo.png
 ├── backend/
 │   ├── app/
 │   │   ├── main.py
-│   │   ├── api/
-│   │   │   └── robot.py
+│   │   ├── controllers/
+│   │   │   └── robot_controller.py
+│   │   ├── models/
+│   │   │   ├── robot_request.py
+│   │   │   ├── robot_response.py
+│   │   │   └── groq_interpretation.py
+│   │   ├── views/
+│   │   │   └── robot_view.py
 │   │   ├── services/
-│   │   │   ├── behavior_service.py
-│   │   │   └── ai_service.py
-│   │   ├── schemas/
-│   │   │   └── robot_action.py
-│   │   └── adapters/
-│   │       └── mqtt_adapter.py
+│   │   │   ├── groq_service.py
+│   │   │   └── animation_service.py
+│   │   ├── repositories/
+│   │   │   └── animation_repository.py
+│   │   └── animations/
+│   │       └── blink/
+│   │           ├── variant_01/
+│   │           │   ├── frame_01
+│   │           │   ├── frame_02
+│   │           │   └── frame_03
+│   │           │
+│   │           ├── variant_02/
+│   │           │   ├── frame_01
+│   │           │   ├── frame_02
+│   │           │   └── frame_03
+│   │           │
+│   │           └── variant_03/
+│   │               ├── frame_01
+│   │               ├── frame_02
+│   │               └── frame_03
+│   ├── tests/
+│   ├── .env.example
+│   ├── .gitignore
 │   └── requirements.txt
-│
-└── README.md
+└── front-end/  # (por desarrollar)
+    └── package.json
 ```
 
-Esta estructura es una propuesta inicial. Los directorios de IA y MQTT pueden comenzar como módulos preparados para integración, sin necesidad de implementarlos por completo en la primera iteración.
+## Proceso de Parpadeo
 
-## 8. Seguridad y control de acciones
+1. **Entrada:** Usuario envía texto solicitando parpadeo
+2. **Interpretación:** Groq analiza el texto para extraer:
+   - `intent`: debe ser "blink"
+   - `should_blink`: boolean indicando si se debe parpadear
+   - `count`: número de parpadeos solicitados
+3. **Validación:** Backend verifica que la intención sea permitida y la cantidad válida
+4. **Selección:** Servicio de animación elige una variante visual disponible
+5. **Salida:** JSON con estructura de parpadeo para el frontend
+6. **Ejecución:** Frontend reproduce la animación de parpadeo usando los frames seleccionados
 
-El modelo de IA no debe tener acceso irrestricto al hardware.
+## Seguridad y Validaciones
 
-Todas las acciones deben pasar por una lista de comportamientos permitidos y por la validación del backend. Los parámetros, los tiempos y los objetivos de cada acción deben tener límites definidos.
+- Credenciales de Groq almacenadas en variables de entorno (nunca en código)
+- Validación rigurosa de entradas con Pydantic
+- Límites definidos para cantidad máxima de parpadeos
+- Verificación de existencia de recursos antes de referenciarlos
+- Manejo controlado de errores de red e inferencia de IA
+- Prevención de inyección de comandos mediante instrucciones de IA
+- Pruebas exhaustivas para intenciones ambiguas y respuestas inválidas
 
-Para las primeras pruebas, el doble parpadeo será una acción visual sin efectos físicos. Cuando se incorpore hardware real, el backend deberá controlar los permisos, los estados y las condiciones de ejecución.
+## Próximos Pasos de Desarrollo
 
-## 9. Plan de desarrollo
+- [ ] Definir e implementar quinto componente facial
+- [ ] Crear endpoint para servir componentes faciales iniciales
+- [ ] Implementar endpoint de interpretación de parpadeo
+- [ ] Desarrollar catálogo de animaciones de parpadeo (3 variantes)
+- [ ] Integrar con frontend Astro + React para renderizado
+- [ ] Establecer WebSocket o mecanismo de eventos para comunicación en tiempo real
+- [ ] Preparar documentación de API completa con Swagger/OpenAPI
 
-- [ ] Crear el frontend Astro + React.
-- [ ] Implementar el componente visual del rostro.
-- [ ] Desarrollar la animación de doble parpadeo.
-- [ ] Crear la API FastAPI para solicitar acciones.
-- [ ] Definir el contrato JSON entre frontend y backend.
-- [ ] Implementar el módulo de comportamiento.
-- [ ] Integrar el modelo de IA para seleccionar acciones a partir del texto.
-- [ ] Validar la ejecución y gestionar errores.
-- [ ] Preparar la comunicación MQTT para futuras interacciones con hardware.
-- [ ] Evaluar la separación en microservicios cuando existan necesidades reales.
+## Principio de Diseño
 
-## 10. Resultado esperado
+**La IA interpreta, el backend coordina y valida, el frontend representa visualmente.** 
+Cada responsabilidad evoluciona independientemente mediante contratos bien definidos, evitando acoplamiento innecesario entre componentes.
 
-La primera versión de WORSHIP Mascot Robot demostrará que una acción puede seleccionarse desde el backend, representarse mediante una instrucción estructurada y ejecutarse visualmente en el frontend.
-
-El doble parpadeo será la base para ampliar el sistema con nuevas expresiones, movimientos, respuestas contextuales y, posteriormente, comportamientos coordinados con componentes físicos.
-
-**Principio de diseño:** la IA decide o propone el comportamiento, el backend valida y coordina, y el frontend representa la acción. Cada responsabilidad debe evolucionar sin acoplar innecesariamente los componentes.
+Esta arquitectura permite:
+- Escalabilidad independiente de cada capa
+- Reemplazo o actualización de componentes sin afectar otros
+- Pruebas unitarias y de integración aisladas
+- Mantenimiento y evolución sostenible del sistema
