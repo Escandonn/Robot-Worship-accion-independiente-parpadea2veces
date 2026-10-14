@@ -2,14 +2,12 @@
 
 ## Visión General
 
-Este microservicio backend gestiona las expresiones faciales y parpadeos de la mascota robótica WORSHIP mediante dos endpoints principales:
-1. **Endpoint de rostro inicial**: Envía los componentes faciales básicos (ojos, nariz, boca) en formato JSON
-2. **Endpoint de parpadeo**: Activa la animación de parpadeo cambiando las imágenes de los ojos
+Este microservicio backend proporciona los componentes faciales iniciales necesarios para renderizar el rostro de la mascota robótica WORSHIP mediante un endpoint REST.
 
 ## 1. Endpoint de Rostro Inicial
 
 ### 1.1 Objetivo
-Proporcionar los componentes faciales iniciales necesarios para renderizar el rostro de la mascota robótica. Estos componentes se obtienen de la carpeta `emociones` y se envían en grupos de 5 elementos a través de un endpoint REST.
+Proporcionar los componentes faciales iniciales necesarios para renderizar el rostro de la mascota robótica. Estos componentes se obtienen de la carpeta `emociones` y se envían en formato JSON con datos codificados en Base64.
 
 ### 1.2 Componentes Faciales
 Los siguientes archivos representan los componentes faciales básicos:
@@ -17,7 +15,6 @@ Los siguientes archivos representan los componentes faciales básicos:
 - `emociones/nariz/nariz.png` - Nariz  
 - `emociones/ojo-derecho/ojo-derecho.png` - Ojo derecho
 - `emociones/ojo-izquierdo/ojo-izquierdo.png` - Ojo izquierdo
-- *(Componente adicional para completar el grupo de 5 - por definir)*
 
 ### 1.3 Endpoint
 ```
@@ -32,190 +29,156 @@ GET /api/v1/face/initial
     {
       "name": "boca",
       "type": "image/png",
-      "data": "base64_encoded_string"
+      "data": "BASE64_IMAGE_DATA"
     },
     {
       "name": "nariz", 
       "type": "image/png",
-      "data": "base64_encoded_string"
+      "data": "BASE64_IMAGE_DATA"
     },
     {
       "name": "ojo-derecho",
       "type": "image/png", 
-      "data": "base64_encoded_string"
+      "data": "BASE64_IMAGE_DATA"
     },
     {
       "name": "ojo-izquierdo",
       "type": "image/png",
-      "data": "base64_encoded_string"
+      "data": "BASE64_IMAGE_DATA"
     }
-    // Quinto componente por definir
   ]
 }
 ```
 
-## 2. Endpoint de Parpadeo
+## 2. Tecnologías
 
-### 2.1 Objetivo
-Interpretar instrucciones de texto mediante Groq y convertirlas en acciones de parpadeo estructuradas para la mascota robótica.
-
-### 2.2 Tecnologías
 - **Python:** lenguaje principal
 - **FastAPI:** API REST
-- **Groq:** inferencia del modelo de IA
 - **Pydantic:** validación de solicitudes y respuestas
 - **Uvicorn:** servidor de desarrollo
-- **python-dotenv:** gestión de variables de entorno
 
-### 2.3 Funcionamiento del Servicio
-```text
-Usuario
-    |
-    | POST /api/v1/robot/interpret
-    | JSON: {"text": "Parpadea dos veces"}
-    v
-FastAPI — Controller
-    |
-    v
-GroqService
-    |
-    | Interpreta intención y cantidad
-    v
-Modelo de IA Groq
-    |
-    | Respuesta estructurada
-    v
-Controller + validación
-    |
-    v
-AnimationService
-    |
-    | Selecciona recurso disponible
-    v
-Respuesta JSON
-    |
-    v
-Frontend Astro + React
-```
+## 3. Arquitectura MVC
 
-### 2.4 Arquitectura MVC
 Se utiliza MVC adaptado a una API REST:
 
-- **Models:** esquemas Pydantic para validar datos
-- **Views:** representación de respuestas HTTP en JSON
-- **Controllers:** recepción y coordinación de solicitudes
-- **Services:** integración con Groq y selección de animaciones
-- **Repositories:** consulta del catálogo de animaciones
-- **animations/:** recursos visuales locales de parpadeo
+- **Models:** esquemas Pydantic para validar datos (`app/models/face_component.py`)
+- **Views:** representación de respuestas HTTP en JSON (`app/views/face_view.py`)
+- **Controllers:** recepción y coordinación de solicitudes (`app/controllers/face_controller.py`)
+- **Services:** lectura, procesamiento y codificación de imágenes (`app/services/face_service.py`)
+- **Repositories:** consulta del catálogo de componentes y acceso a los archivos (`app/repositories/face_repository.py`)
+- **Main:** inicialización de FastAPI y registro de rutas (`app/main.py`)
 
-### 2.5 Estructura del Backend
+## 4. Estructura del Backend
+
 ```text
 backend/
 ├── app/
 │   ├── main.py
 │   │
 │   ├── controllers/
-│   │   └── robot_controller.py
+│   │   └── face_controller.py
 │   │
 │   ├── models/
-│   │   ├── robot_request.py
-│   │   ├── robot_response.py
-│   │   └── groq_interpretation.py
+│   │   └── face_component.py
 │   │
 │   ├── views/
-│   │   └── robot_view.py
+│   │   └── face_view.py
 │   │
 │   ├── services/
-│   │   ├── groq_service.py
-│   │   └── animation_service.py
+│   │   └── face_service.py
 │   │
 │   ├── repositories/
-│   │   └── animation_repository.py
+│   │   └── face_repository.py
 │   │
-│   └── animations/
-│       └── blink/
-│           ├── variant_01/
-│           │   ├── frame_01
-│           │   ├── frame_02
-│           │   └── frame_03
-│           │
-│           ├── variant_02/
-│           │   ├── frame_01
-│           │   ├── frame_02
-│           │   └── frame_03
-│           │
-│           └── variant_03/
-│               ├── frame_01
-│               ├── frame_02
-│               └── frame_03
-│
+│   └── assets/
+│       └── emociones/
+│           ├── boca/
+│           │   └── boca.png
+│           ├── nariz/
+│           │   └── nariz.png
+│           ├── ojo-derecho/
+│           │   └── ojo-derecho.png
+│           └── ojo-izquierdo/
+│               └── ojo-izquierdo.png
 ├── tests/
-├── .env.example
-├── .gitignore
+│   └── test_face_initial.py
+├── docs/
+│   ├── 01-arquitectura.md
+│   ├── 02-diagrama-clases.md
+│   ├── 03-casos-de-uso.md
+│   ├── 04-flujo-endpoint.md
+│   └── 05-flujo-usuario.md
 ├── requirements.txt
+├── .env.example
 └── README.md
 ```
 
-### 2.6 API de Parpadeo
-#### POST /api/v1/robot/interpret
-Recibe texto y devuelve la interpretación junto con la acción de parpadeo y referencia visual.
+## 5. Funcionamiento del Servicio
 
-**Solicitud:**
-```json
-{
-  "text": "Parpadea dos veces"
-}
+```text
+Usuario
+    |
+    | GET /api/v1/face/initial
+    v
+FastAPI — Router
+    |
+    v
+FaceController
+    |
+    v
+FaceService
+    |
+    v
+FaceRepository
+    |
+    v
+Sistema de archivos (emociones/)
+    |
+    v
+FaceRepository (codifica a Base64)
+    |
+    v
+FaceService
+    |
+    v
+FaceController
+    |
+    v
+FaceView (formatea respuesta JSON)
+    |
+    v
+FastAPI — Response
+    |
+    v
+Frontend Astro + React
 ```
 
-**Respuesta de ejemplo:**
-```json
-{
-  "success": true,
-  "intent": "blink",
-  "should_blink": true,
-  "count": 2,
-  "animation": {
-    "variant": "variant_02",
-    "frames": [
-      "frame_01",
-      "frame_02", 
-      "frame_03"
-    ]
-  }
-}
-```
+## 6. Instalación y Ejecución
 
-### 2.7 Integración con Groq
-Groq interpreta el texto del usuario para identificar:
-- `intent`: debe ser "blink" para activar parpadeo
-- `should_blink`: boolean que indica si se debe parpadear
-- `count`: número entero de parpadeos solicitados
-
-La clave de Groq se almacena en variable de entorno:
-```env
-GROQ_API_KEY=tu_clave_de_groq
-```
-
-### 2.8 Instalación y Ejecución
 1. Crear entorno virtual: `python -m venv .venv`
-2. Activar (Windows): `.venv\Scripts\activate`
+2. Activar el entorno virtual:
+   - Windows: `.venv\Scripts\activate`
+   - Linux/macOS: `source .venv/bin/activate`
 3. Instalar dependencias: `pip install -r requirements.txt`
-4. Configurar `.env` con `GROQ_API_KEY`
-5. Iniciar: `uvicorn app.main:app --reload`
-6. Documentación: `http://127.0.0.1:8000/docs`
+4. Iniciar el servidor: `uvicorn app.main:app --reload`
+5. La documentación interactiva estará disponible en:
+    - `http://127.0.0.1:8000/docs`
+    - `http://127.0.0.1:8000/redoc`
+6. Probar el endpoint: `http://127.0.0.1:8000/api/v1/face/initial`
+   - Debería retornar un JSON con `success: true` y una lista de 4 componentes faciales codificados en Base64.
 
-## 3. Seguridad y Validaciones
-- Mantener clave de Groq fuera del código fuente
-- Validar entradas con Pydantic
-- Limitar cantidad máxima de parpadeos
-- Verificar existencia de variantes y recursos
-- Manejar errores de red e inferencia controladamente
-- Prevenir inyección de comandos mediante IA
-- Añadir pruebas para casos edge
+## 7. Seguridad y Validaciones
 
-## 4. Próximos Pasos
-- [ ] Implementar endpoint de rostro inicial
-- [ ] Implementar endpoint de parpadeo
-- [ ] Definir quinto componente facial
-- [ ] Crear catálogo de animaciones de parpadeo
-- [ ] Integrar con frontend Astro + React
+- Validar existencia de todos los archivos PNG configurados
+- Verificar que los archivos puedan leerse correctamente
+- Validar la estructura de salida mediante Pydantic
+- Gestionar errores de lectura y archivos inexistentes con HTTP apropiados
+- Mantener una lista centralizada de componentes en el repositorio
+- No revelar rutas internas ni trazas en los mensajes de error
+
+## 8. Próximos Pasos
+
+- [ ] Implementar pruebas automatizadas completas
+- [ ] Añadir documentación detallada en los archivos de docs/
+- [ ] Preparar integración con frontend Astro + React
+- [ ] Diseñar estructura para futuros endpoints (parpadeo, emociones, etc.)
