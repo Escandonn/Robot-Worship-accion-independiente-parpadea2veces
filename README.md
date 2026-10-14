@@ -42,19 +42,18 @@ Plataforma de interacción que combina representación visual animada, lógica d
 **Funcionalidad:**
 - Lee componentes de la carpeta `emociones/`
 - Los envía en formato JSON como imágenes base64
-- Se envían en grupos de 5 elementos (4 componentes actuales + 1 por definir)
 - Proporciona el estado visual base del robot
 
-### 2. Endpoint de Parpadeo
-**Propósito:** Interpretar instrucciones de texto y generar acciones de parpadeo
+### 2. Endpoint de Interpretación de Texto
+**Propósito:** Interpretar instrucciones de texto mediante IA y generar respuestas estructuradas (texto, imagen o animación)
 **Endpoint:** `POST /api/v1/robot/interpret`
 **Tecnologías:** Python, FastAPI, Groq, Pydantic
 **Flujo:**
-1. Usuario envía texto: `{"text": "Parpadea dos veces"}`
-2. Backend procesa con Groq para identificar intención y cantidad
-3. Servicio de animación selecciona variante visual apropiada
-4. Retorna JSON con instrucciones de parpadeo
-5. Frontend ejecuta la animación correspondiente
+1. Usuario envía texto: `{"text": "Hola Risp, ¿cómo estás?"}`
+2. Backend procesa con Groq para identificar intención y tipo de respuesta
+3. Servicio de respuesta valida y formatea la salida
+4. Retorna JSON con instrucciones para el frontend
+5. Frontend ejecuta la acción correspondiente (mostrar texto, imagen o animación)
 
 ## Arquitectura Backend Detallada
 
@@ -64,9 +63,11 @@ Plataforma de interacción que combina representación visual animada, lógica d
 - **Controllers:** Recepción y coordinación de solicitudes
 - **Services:** 
   - `groq_service.py` - Comunicación con Groq e interpretación de texto
-  - `animation_service.py` - Selección de variantes y validación de cantidad
-- **Repositories:** Consulta del catálogo de animaciones disponibles
+  - `response_service.py` - Validación y preparación de respuestas
+  - `face_service.py` - Lectura, procesamiento y codificación de imágenes (para el endpoint inicial)
+- **Repositories:** Consulta del catálogo de recursos disponibles
 - **animations/:** Recursos visuales locales para parpadeo (3 variantes con 3 frames cada una)
+- **emociones/:** Recursos visuales faciales básicos (para el endpoint inicial)
 
 ### Estructura de Carpetas
 ```text
@@ -84,53 +85,83 @@ worship-mascot-robot/
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── controllers/
+│   │   │   ├── face_controller.py
 │   │   │   └── robot_controller.py
 │   │   ├── models/
+│   │   │   ├── face_component.py
 │   │   │   ├── robot_request.py
 │   │   │   ├── robot_response.py
 │   │   │   └── groq_interpretation.py
 │   │   ├── views/
+│   │   │   ├── face_view.py
 │   │   │   └── robot_view.py
 │   │   ├── services/
 │   │   │   ├── groq_service.py
-│   │   │   └── animation_service.py
+│   │   │   ├── response_service.py
+│   │   │   └── face_service.py
 │   │   ├── repositories/
-│   │   │   └── animation_repository.py
-│   │   └── animations/
-│   │       └── blink/
-│   │           ├── variant_01/
-│   │           │   ├── frame_01
-│   │           │   ├── frame_02
-│   │           │   └── frame_03
-│   │           │
-│   │           ├── variant_02/
-│   │           │   ├── frame_01
-│   │           │   ├── frame_02
-│   │           │   └── frame_03
-│   │           │
-│   │           └── variant_03/
-│   │               ├── frame_01
-│   │               ├── frame_02
-│   │               └── frame_03
+│   │   │   ├── face_repository.py
+│   │   │   └── resource_repository.py
+│   │   └── assets/
+│   │       └── emociones/
+│   │           ├── boca/
+│   │           │   └── boca.png
+│   │           ├── nariz/
+│   │           │   └── nariz.png
+│   │           ├── ojo-derecho/
+│   │           │   └── ojo-derecho.png
+│   │           └── ojo-izquierdo/
+│   │               └── ojo-izquierdo.png
 │   ├── tests/
+│   │   ├── test_face_initial.py
+│   │   ├── test_robot_interpret.py
+│   │   ├── test_groq_service.py
+│   │   └── test_response_service.py
+│   ├── docs/
+│   │   ├── 01-arquitectura.md
+│   │   ├── 02-diagrama-clases.md
+│   │   ├── 03-casos-de-uso.md
+│   │   ├── 04-flujo-endpoint.md
+│   │   └── 05-flujo-usuario.md
 │   ├── .env.example
-│   ├── .gitignore
-│   └── requirements.txt
+│   │   ├── .gitignore
+│   │   └── requirements.txt
 └── front-end/  # (por desarrollar)
     └── package.json
 ```
 
-## Proceso de Parpadeo
+## Proceso de Interpretación de Texto
 
-1. **Entrada:** Usuario envía texto solicitando parpadeo
+1. **Entrada:** Usuario envía texto solicitando una acción o información
 2. **Interpretación:** Groq analiza el texto para extraer:
-   - `intent`: debe ser "blink"
-   - `should_blink`: boolean indicando si se debe parpadear
-   - `count`: número de parpadeos solicitados
-3. **Validación:** Backend verifica que la intención sea permitida y la cantidad válida
-4. **Selección:** Servicio de animación elige una variante visual disponible
-5. **Salida:** JSON con estructura de parpadeo para el frontend
-6. **Ejecución:** Frontend reproduce la animación de parpadeo usando los frames seleccionados
+   - `intent`: intención identificada (saludo, mostrar imagen, parpadear, etc.)
+   - `response.type`: tipo de salida (text, image o animation)
+   - `response.content`: contenido descriptivo de la respuesta
+   - `response.resource`: referencia al recurso o parámetros necesarios (cuando aplique)
+3. **Validación:** Backend verifica que la intención sea permitida y que los recursos existan
+4. **Salida:** JSON con estructura de respuesta para el frontend
+5. **Ejecución:** Frontend procesa la respuesta según su tipo (mostrar texto, mostrar imagen o ejecutar animación)
+
+## Proceso de Parpadeo (Caso Específico)
+
+Cuando la intención identificada es "blink":
+1. **Entrada:** Usuario envía texto solicitando parpadeo (ej: "Parpadea dos veces")
+2. **Interpretación:** Groq identifica:
+   - `intent`: "blink"
+   - `response.type`: "animation"
+   - `response.content`: texto descriptivo (ej: "Voy a parpadear dos veces.")
+   - `response.resource`: 
+     ```json
+     {
+       "name": "blink",
+       "parameters": {
+         "count": 2
+       }
+     }
+     ```
+3. **Validación:** Backend verifica que la intención "blink" esté permitida
+4. **Salida:** JSON con estructura de animación para el frontend
+5. **Ejecución:** Frontend reproduce la animación de parpadeo usando los frames seleccionados
 
 ## Seguridad y Validaciones
 
@@ -145,8 +176,8 @@ worship-mascot-robot/
 ## Próximos Pasos de Desarrollo
 
 - [ ] Definir e implementar quinto componente facial
-- [ ] Crear endpoint para servir componentes faciales iniciales
-- [ ] Implementar endpoint de interpretación de parpadeo
+- [ ] Crear endpoint para servir componentes faciales iniciales (YA IMPLEMENTADO)
+- [ ] Implementar endpoint de interpretación de texto
 - [ ] Desarrollar catálogo de animaciones de parpadeo (3 variantes)
 - [ ] Integrar con frontend Astro + React para renderizado
 - [ ] Establecer WebSocket o mecanismo de eventos para comunicación en tiempo real
