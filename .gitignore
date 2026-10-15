@@ -1,0 +1,200 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+media
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#   According to the pypipenv documentation
+#   https://pipenv.readthedocs.io/en/latest/
+#   Not all of these are relevant to this project but are included to be safe.
+#   See: https://pipenv.readthedocs.io/en/latest/stdlib.html#pipenv
+#   and https://pipenv.readthedocs.io/en/latest/stdlib.html#os.environ
+Pipfile
+Pipfile.lock
+
+# Poetry
+#   Similar to Pipfile.lock, poetry.lock is generally recommended to be committed
+#   in a repo, but this is a exception for an example project.
+#   Poetry follows the same logic as Pipfile.lock in that it is primarily a lock
+#   file for use by CI and local development, and is not intended to be
+#   published. As such, we recommend that it not be committed to version control.
+#   If you decide to include it in your version control, you should add the
+#   `poetry export` command to your CI pipeline to ensure that the dependencies
+#   are installed correctly from the lock file.
+poetry.lock
+
+# pdm
+pdm.lock
+.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/David-OConnor/pyflow/__pypackages__
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate project for combination
+#  of the versions and the various configuration files.
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Backup files
+*~
+
+# Windows
+Thumbs.db
+EhThumbs.v
+Desktop.ini
+[Dd]esktop.ini
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two 
+Icon
+
+# Files created by the edit on Microsoft Windows
+ ehthumbs.v
+
+# Linux
+*~
+
+# KDE directory preferences
+.dir
+
+# Linux trash folder which might have appeared in earlier script tests
+.trash-ng
+
+# Snapseed
+#   iOS and Android snapshots saved by Snapseed
+
+# Serena
+#   Serena Commands for ChangeMan
+
+# TaoTaoTao
+#   TaoTaoTao backup
+
+# Vim
+#   Vim swap file
+[._]*.swn-[._]*.swo-[._]*.s*[._]*.sv[._]*.*[._]*.sw[._]*.[._]*.*[._]*.*
