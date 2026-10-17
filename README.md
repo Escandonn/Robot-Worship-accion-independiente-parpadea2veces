@@ -126,7 +126,15 @@ worship-mascot-robot/
 │   ├── .env.example
 │   │   ├── .gitignore
 │   │   └── requirements.txt
-└── front-end/  # (por desarrollar)
+└── front-end/  # (Astro + React, MVC implementado)
+    ├── src/
+    │   ├── pages/index.astro
+    │   ├── models/faceModel.ts
+    │   ├── services/faceService.ts
+    │   ├── controllers/faceController.ts
+    │   ├── views/FaceView.tsx
+    │   └── components/FaceRenderer.tsx
+    ├── docs/
     └── package.json
 ```
 
