@@ -160,7 +160,7 @@ Frontend Astro + React
    - Windows: `.venv\Scripts\activate`
    - Linux/macOS: `source .venv/bin/activate`
 3. Instalar dependencias: `pip install -r requirements.txt`
-4. Iniciar el servidor: `uvicorn app.main:app --reload`
+4. Iniciar el servidor: `python -m uvicorn app.main:app --reload`
 5. La documentación interactiva estará disponible en:
    - `http://127.0.0.1:8000/docs`
    - `http://127.0.0.1:8000/redoc`

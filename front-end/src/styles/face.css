@@ -1,0 +1,14 @@
+.face-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+.face-iframe {
+  position: absolute;
+  border: none;
+  background: transparent;
+  object-fit: contain;
+}

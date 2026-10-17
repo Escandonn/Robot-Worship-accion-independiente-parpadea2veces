@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { loadFace } from "../controllers/faceController";
 import type { FaceResponse } from "../models/faceModel";
 import { FaceRenderer } from "../components/FaceRenderer";
+import "../styles/face.css";
 
 export function FaceView() {
   const [loading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ export function FaceView() {
   }, []);
 
   return (
-    <div style={{ position: "relative", width: 300, height: 300 }}>
+    <div className="face-container">
       {loading && <p>Loading...</p>}
       {error && (
         <div>
