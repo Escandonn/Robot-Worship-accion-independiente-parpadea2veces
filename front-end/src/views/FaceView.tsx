@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { loadFace } from "../controllers/faceController";
 import type { FaceResponse } from "../models/faceModel";
 import { FaceRenderer } from "../components/FaceRenderer";
+import { ChatCentral } from "../components/ChatCentral";
 import "../styles/face.css";
+import "../styles/chat.css";
 
 export function FaceView() {
   const [loading, setLoading] = useState(true);
@@ -42,15 +44,18 @@ export function FaceView() {
   }, []);
 
   return (
-    <div className="face-container">
-      {loading && <p>Loading...</p>}
-      {error && (
-        <div>
-          <p>{error}</p>
-          <button onClick={load}>Retry</button>
-        </div>
-      )}
-      {!loading && !error && data && <FaceRenderer components={data.components} />}
+    <div className="face-page">
+      <div className="face-stage">
+        {loading && <p>Loading...</p>}
+        {error && (
+          <div>
+            <p>{error}</p>
+            <button onClick={load}>Retry</button>
+          </div>
+        )}
+        {!loading && !error && data && <FaceRenderer components={data.components} />}
+      </div>
+      <ChatCentral />
     </div>
   );
 }

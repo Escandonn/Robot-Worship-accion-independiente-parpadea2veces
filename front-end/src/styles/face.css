@@ -1,9 +1,50 @@
-.face-container {
-  position: relative;
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+/* Ocultar barras de desplazamiento en todo el documento */
+* {
+  scrollbar-width: none;
+  scrollbar-color: transparent;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+.face-page {
   width: 100vw;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: #000000;
   overflow: hidden;
+}
+
+.face-stage {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  background-color: #000000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.face-container {
+  position: relative;
+  width: min(850px, 96vw);
+  height: min(640px, 72vh);
+  background-color: #000000;
+  border: 1px solid #1a1a1a;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .face-iframe {
@@ -11,4 +52,16 @@
   border: none;
   background: transparent;
   object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .face-stage {
+    padding: 12px;
+  }
+  .face-container {
+    width: 95vw;
+    height: 60vh;
+    max-width: none;
+    max-height: none;
+  }
 }
