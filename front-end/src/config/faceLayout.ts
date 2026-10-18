@@ -7,27 +7,27 @@ export interface FaceLayoutItem {
 
 export const faceLayout: Record<string, FaceLayoutItem> = {
   "ojo-izquierdo": {
-    x: 0,
-    y: 0,
-    width: 50,
-    height: 95,
+    x: -15,
+    y: -10,
+    width: 75,
+    height: 100,
   },
   "ojo-derecho": {
-    x: 50,
-    y: 0,
-    width: 50,
-    height: 95,
+    x: 35,
+    y: -10,
+    width: 75,
+    height: 100,
   },
   nariz: {
-    x: 42,
-    y: 22,
+    x: 41,
+    y: 28,
     width: 16,
     height: 28,
   },
-  boca: {
-    x: 39,
-    y: 75,
-    width: 22,
-    height: 8,
+boca: {
+    x: 24,
+    y: 72,
+    width: 50,
+    height: 34,
   },
 };
