@@ -1,12 +1,11 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #000000;
+  background-color: #050505;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   overflow: hidden;
 }
 
-/* Ocultar barras de desplazamiento en todo el documento */
 * {
   scrollbar-width: none;
   scrollbar-color: transparent;
@@ -21,7 +20,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #000000;
+  background-color: #050505;
   overflow: hidden;
 }
 
@@ -29,7 +28,7 @@ body {
   flex: 1;
   position: relative;
   width: 100%;
-  background-color: #000000;
+  background-color: #050505;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -41,7 +40,7 @@ body {
   position: relative;
   width: min(850px, 96vw);
   height: min(640px, 72vh);
-  background-color: #000000;
+  background-color: #050505;
   border: 1px solid #1a1a1a;
   overflow: hidden;
   flex-shrink: 0;
@@ -54,14 +53,64 @@ body {
   object-fit: contain;
 }
 
+.face-message {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 10;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.face-message-title {
+  margin: 0;
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: #F5F5F5;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.face-message-highlight {
+  color: #F5B82E;
+  font-weight: 700;
+}
+
+.face-message-subtitle {
+  margin: 4px 0 0;
+  font-size: clamp(12px, 1.5vw, 14px);
+  color: #94A3B8;
+  letter-spacing: 0.3px;
+}
+
 @media (max-width: 768px) {
   .face-stage {
     padding: 12px;
   }
   .face-container {
     width: 95vw;
-    height: 60vh;
+    height: 50vh;
     max-width: none;
     max-height: none;
+  }
+  .face-message {
+    bottom: 10px;
+  }
+  .face-message-title {
+    font-size: clamp(16px, 3vw, 20px);
+  }
+  .face-message-subtitle {
+    font-size: clamp(11px, 2vw, 13px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face-message,
+  .face-message-title,
+  .face-message-subtitle {
+    animation: none;
+    transition: none;
   }
 }

@@ -65,7 +65,7 @@ export function ChatCentral() {
       <div className="chat-header">
         <span className="chat-title">WORSHIP Chat</span>
       </div>
-      <div className="chat-messages">
+      <div className="chat-messages" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && (
           <div className="chat-empty">
             <p>Hola, soy WORSHIP. ¿En qué puedo ayudarte?</p>
@@ -75,18 +75,23 @@ export function ChatCentral() {
           <div
             key={msg.id}
             className={`chat-bubble ${msg.role === "user" ? "user" : "bot"}`}
+            role="article"
+            aria-label={msg.role === "user" ? "Tu mensaje" : "Respuesta del robot"}
           >
             {msg.text}
           </div>
         ))}
         {loading && (
-          <div className="chat-bubble bot">
+          <div className="chat-bubble bot" aria-label="El robot está escribiendo">
             <span className="chat-typing">...</span>
           </div>
         )}
-        {error && <div className="chat-error">{error}</div>}
+        {error && <div className="chat-error" role="alert">{error}</div>}
         <div ref={messagesEndRef} />
       </div>
+      <p className="chat-vision-message" aria-hidden="true">
+        Próximamente podrás verme y entender tu entorno.
+      </p>
       <div className="chat-input-area">
         <textarea
           className="chat-input"
@@ -96,11 +101,13 @@ export function ChatCentral() {
           placeholder="Escribe un mensaje..."
           rows={1}
           disabled={loading}
+          aria-label="Escribe tu mensaje para WORSHIP"
         />
         <button
           className="chat-send"
           onClick={handleSend}
           disabled={loading || !input.trim()}
+          aria-label="Enviar mensaje"
         >
           Enviar
         </button>

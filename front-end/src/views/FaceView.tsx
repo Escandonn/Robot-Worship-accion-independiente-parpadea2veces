@@ -46,14 +46,24 @@ export function FaceView() {
   return (
     <div className="face-page">
       <div className="face-stage">
-        {loading && <p>Loading...</p>}
+        {loading && <p style={{ color: "#94A3B8" }}>Loading...</p>}
         {error && (
           <div>
-            <p>{error}</p>
+            <p style={{ color: "#ff8a8a" }}>{error}</p>
             <button onClick={load}>Retry</button>
           </div>
         )}
-        {!loading && !error && data && <FaceRenderer components={data.components} />}
+        {!loading && !error && data && (
+          <>
+            <FaceRenderer components={data.components} />
+            <div className="face-message">
+              <h2 className="face-message-title">
+                Parpadea <span className="face-message-highlight">2 veces</span>.
+              </h2>
+              <p className="face-message-subtitle">Es mi primera acción autónoma.</p>
+            </div>
+          </>
+        )}
       </div>
       <ChatCentral />
     </div>
