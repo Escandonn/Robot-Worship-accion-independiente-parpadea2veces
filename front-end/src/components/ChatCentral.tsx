@@ -72,6 +72,7 @@ export function ChatCentral() {
               Parpadea <span className="chat-static-highlight">2 veces</span>.
             </h2>
             <p className="chat-static-subtitle">Pide que parpadee y no serás el mismo.</p>
+            <p className="chat-static-subtitle">Próximamente podré verte y entender tu entorno.</p>
           </div>
         )}
         {messages.map((msg) => (

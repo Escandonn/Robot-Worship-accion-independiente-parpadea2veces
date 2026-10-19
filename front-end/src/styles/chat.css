@@ -6,10 +6,6 @@ body {
   overflow: hidden;
 }
 
-* {
-  scrollbar-width: none;
-}
-
 .chat-container {
   width: 100%;
   background-color: #050505;

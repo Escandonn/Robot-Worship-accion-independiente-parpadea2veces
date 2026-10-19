@@ -6,10 +6,6 @@ body {
   overflow: hidden;
 }
 
-* {
-  scrollbar-width: none;
-}
-
 .face-page {
   width: 100vw;
   height: 100vh;
