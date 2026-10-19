@@ -19,9 +19,9 @@ export const faceLayout: Record<string, FaceLayoutItem> = {
     height: 62,
   },
   nariz: {
-    x: 42,
+    x: 40,
     y: 32,
-    width: 16,
+    width: 19,
     height: 28,
   },
   boca: {
