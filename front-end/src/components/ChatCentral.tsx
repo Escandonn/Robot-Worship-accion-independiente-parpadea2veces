@@ -67,8 +67,11 @@ export function ChatCentral() {
       </div>
       <div className="chat-messages" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && (
-          <div className="chat-empty">
-            <p>Hola, soy WORSHIP. ¿En qué puedo ayudarte?</p>
+          <div className="chat-static-message">
+            <h2 className="chat-static-title">
+              Parpadea <span className="chat-static-highlight">2 veces</span>.
+            </h2>
+            <p className="chat-static-subtitle">Pide que parpadee y no serás el mismo.</p>
           </div>
         )}
         {messages.map((msg) => (
@@ -90,7 +93,7 @@ export function ChatCentral() {
         <div ref={messagesEndRef} />
       </div>
       <p className="chat-vision-message" aria-hidden="true">
-        Próximamente podrás verme y entender tu entorno.
+        Próximamente podré verte y entender tu entorno.
       </p>
       <div className="chat-input-area">
         <textarea

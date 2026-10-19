@@ -8,11 +8,6 @@ body {
 
 * {
   scrollbar-width: none;
-  scrollbar-color: transparent;
-}
-
-*::-webkit-scrollbar {
-  display: none;
 }
 
 .face-page {
