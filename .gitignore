@@ -198,3 +198,7 @@ Icon
 # Vim
 #   Vim swap file
 [._]*.swn-[._]*.swo-[._]*.s*[._]*.sv[._]*.*[._]*.sw[._]*.[._]*.*[._]*.*
+
+
+.env
+backend/.env
