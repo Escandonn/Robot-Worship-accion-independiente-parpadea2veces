@@ -5,12 +5,36 @@ export interface ChatMessage {
   timestamp: number;
 }
 
-export interface ChatResponse {
-  success: boolean;
-  intent: string;
+export interface BlinkFrame {
+  name: "1.png" | "2.png" | "3.png";
+  format: "png";
+  data: string;
+}
+
+export interface BlinkAnimation {
+  frames: BlinkFrame[];
+  count: number;
+}
+
+interface TextChatResponse {
+  success: true;
+  intent: "text";
   response: {
-    type: string;
+    type: "text";
     content: string;
-    resource?: Record<string, unknown> | null;
+    frames: [];
   };
 }
+
+interface BlinkChatResponse {
+  success: true;
+  intent: "blink";
+  response: {
+    type: "animation";
+    content: string;
+    frames: BlinkFrame[];
+    count: number;
+  };
+}
+
+export type ChatResponse = TextChatResponse | BlinkChatResponse;

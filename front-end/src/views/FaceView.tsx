@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { loadFace } from "../controllers/faceController";
 import type { FaceResponse } from "../models/faceModel";
+import type { BlinkAnimation } from "../models/chatModel";
 import { FaceRenderer } from "../components/FaceRenderer";
 import { ChatCentral } from "../components/ChatCentral";
 import "../styles/face.css";
@@ -10,6 +11,11 @@ export function FaceView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<FaceResponse | null>(null);
+  const [animation, setAnimation] = useState<BlinkAnimation | null>(null);
+
+  const handleBlink = (blink: BlinkAnimation) => {
+    setAnimation(blink);
+  };
 
   const load = async () => {
     setLoading(true);
@@ -55,7 +61,7 @@ export function FaceView() {
         )}
         {!loading && !error && data && (
           <>
-            <FaceRenderer components={data.components} />
+            <FaceRenderer components={data.components} animation={animation} />
             <div className="face-message">
               <h2 className="face-message-title">
                 Parpadea <span className="face-message-highlight">2 veces</span>.
@@ -65,7 +71,7 @@ export function FaceView() {
           </>
         )}
       </div>
-      <ChatCentral />
+      <ChatCentral onBlink={handleBlink} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { interpretChat } from "../controllers/chatController";
+import type { BlinkAnimation } from "../models/chatModel";
 import "../styles/chat.css";
 
 interface Message {
@@ -8,7 +9,11 @@ interface Message {
   text: string;
 }
 
-export function ChatCentral() {
+interface Props {
+  onBlink: (animation: BlinkAnimation) => void;
+}
+
+export function ChatCentral({ onBlink }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,6 +45,13 @@ export function ChatCentral() {
 
     try {
       const result = await interpretChat(text);
+      if (result.intent === "blink") {
+        onBlink({
+          frames: result.response.frames,
+          count: result.response.count,
+        });
+      }
+
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
         role: "bot",
