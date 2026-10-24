@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.services.groq_service import GroqService
 from app.views.robot_view import create_robot_response
 from app.models.robot_request import RobotRequest
+from app.models.robot_response import RobotResponse, RobotResponseData
 import logging
 
 # Set up logger
@@ -28,10 +29,31 @@ async def interpret_robot_command(request: RobotRequest):
     try:
         logger.info(f"Received interpretation request: {request.text}")
         
-        response_text = groq_service.interpret_text(request)
-        logger.info(f"Groq response: {response_text}")
-        
-        return create_robot_response(success=True, response_text=response_text)
+        interpretation = groq_service.interpret_text(request)
+
+        if interpretation.intent == "blink":
+            response = RobotResponse(
+                success=True,
+                intent="blink",
+                response=RobotResponseData(
+                    type="animation",
+                    content="Parpadeo detectado",
+                    frames=groq_service.get_blink_frames(),
+                    count=interpretation.count,
+                ),
+            )
+        else:
+            response = RobotResponse(
+                success=True,
+                intent="text",
+                response=RobotResponseData(
+                    type="text",
+                    content=interpretation.content,
+                    frames=[],
+                ),
+            )
+
+        return create_robot_response(response)
         
     except ValueError as e:
         logger.error(f"Validation error: {str(e)}")

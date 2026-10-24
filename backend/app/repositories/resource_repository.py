@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Dict, Any, Optional
 
@@ -77,3 +76,13 @@ class ResourceRepository:
             # In a more complex implementation, we would return frames for a specific variant
             # For now, we'll just return the general frames
             return animation_info["frames"]
+
+    def read_blink_frame_bytes(self) -> list[tuple[str, bytes]]:
+        """Read the ordered PNG frames used by the blink animation."""
+        frames_path = Path(__file__).resolve().parents[1] / "assets" / "ojos"
+        frame_names = ("1.png", "2.png", "3.png")
+
+        return [
+            (name, (frames_path / name).read_bytes())
+            for name in frame_names
+        ]

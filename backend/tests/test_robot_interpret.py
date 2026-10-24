@@ -1,97 +1,163 @@
-from fastapi.testclient import TestClient
-from app.main import app
+import base64
+from types import SimpleNamespace
 
-# Create test client
+import pytest
+from fastapi.testclient import TestClient
+
+from app.controllers import robot_controller
+from app.main import app
+from app.models.groq_interpretation import GroqInterpretation
+from app.models.robot_request import RobotRequest
+from app.models.robot_response import RobotFrame, RobotResponseData
+from app.repositories.resource_repository import ResourceRepository
+from app.services.groq_service import GroqService, INTERPRETATION_SYSTEM_PROMPT
+
+
 client = TestClient(app)
 
-def test_interpret_robot_command_success():
-    """Test that the endpoint returns successfully with a valid interpretation."""
-    response = client.post(
-        "/api/v1/robot/interpret",
-        json={"text": "Hola Risp, ¿cómo estás?"}
-    )
-    
-    # Check that the request was successful
-    assert response.status_code == 200
-    
-    # Parse JSON response
-    data = response.json()
-    
-    # Check response structure
-    assert data["success"] == True
-    assert "intent" in data
-    assert "response" in data
-    assert isinstance(data["response"], dict)
-    
-    # Check response has required fields
-    assert "type" in data["response"]
-    assert "content" in data["response"]
-    assert "resource" in data["response"]  # Can be null
-    
-    # Check that response type is valid
-    assert data["response"]["type"] in ["text", "image", "animation"]
-    
-    # Check that content is not empty
-    assert len(data["response"]["content"].strip()) > 0
 
-def test_interpret_robot_command_blink():
-    """Test that the endpoint correctly interprets a blink command."""
+def test_interpret_robot_command_blink_returns_ordered_base64_frames(monkeypatch):
+    def interpret_blink(request: RobotRequest) -> GroqInterpretation:
+        assert request.text == "Parpadea dos veces"
+        return GroqInterpretation(
+            intent="blink",
+            content="Parpadeo detectado",
+            count=2,
+        )
+
+    monkeypatch.setattr(
+        robot_controller.groq_service,
+        "interpret_text",
+        interpret_blink,
+    )
+
     response = client.post(
         "/api/v1/robot/interpret",
-        json={"text": "Parpadea dos veces"}
+        json={"text": "Parpadea dos veces"},
     )
-    
-    # Check that the request was successful
+
     assert response.status_code == 200
-    
-    # Parse JSON response
     data = response.json()
-    
-    # Check response structure
-    assert data["success"] == True
+    assert data["success"] is True
     assert data["intent"] == "blink"
     assert data["response"]["type"] == "animation"
-    assert "Voy a parpadear" in data["response"]["content"] or "parpadear" in data["response"]["content"]
-    
-    # Check that resource contains blink information
-    assert data["response"]["resource"] is not None
-    assert data["response"]["resource"]["name"] == "blink"
-    assert "parameters" in data["response"]["resource"]
-    assert "count" in data["response"]["resource"]["parameters"]
+    assert data["response"]["content"] == "Parpadeo detectado"
+    assert data["response"]["count"] == 2
+    assert [frame["name"] for frame in data["response"]["frames"]] == [
+        "1.png",
+        "2.png",
+        "3.png",
+    ]
+    assert all(frame["format"] == "png" for frame in data["response"]["frames"])
 
-def test_interpret_robot_command_empty_text():
-    """Test that the endpoint handles empty text appropriately."""
+
+def test_interpret_robot_command_text_does_not_load_frames(monkeypatch):
+    def interpret_text(request: RobotRequest) -> GroqInterpretation:
+        assert request.text == "Hola Risp, ¿cómo estás?"
+        return GroqInterpretation(
+            intent="text",
+            content="¡Hola! Estoy listo para ayudarte.",
+        )
+
+    monkeypatch.setattr(
+        robot_controller.groq_service,
+        "interpret_text",
+        interpret_text,
+    )
+
+    def unexpected_frame_load():
+        pytest.fail("Text responses must not load animation frames")
+
+    monkeypatch.setattr(
+        robot_controller.groq_service,
+        "get_blink_frames",
+        unexpected_frame_load,
+    )
+
     response = client.post(
         "/api/v1/robot/interpret",
-        json={"text": ""}
+        json={"text": "Hola Risp, ¿cómo estás?"},
     )
-    
-    # Should return a validation error
-    assert response.status_code == 400  # Bad Request
 
-def test_interpret_robot_command_response_structure():
-    """Test that the response matches the expected structure."""
-    response = client.post(
-        "/api/v1/robot/interpret",
-        json={"text": "Cualquier texto para probar"}
-    )
-    
     assert response.status_code == 200
-    
     data = response.json()
-    
-    # Check top-level keys
-    assert set(data.keys()) == {"success", "intent", "response"}
-    
-    # Check success is boolean
-    assert isinstance(data["success"], bool)
-    
-    # Check intent is string
-    assert isinstance(data["intent"], str)
-    
-    # Check response structure
-    assert set(data["response"].keys()) == {"type", "content", "resource"}
-    assert isinstance(data["response"]["type"], str)
-    assert isinstance(data["response"]["content"], str)
-    # resource can be null or a dict
-    assert data["response"]["resource"] is None or isinstance(data["response"]["resource"], dict)
+    assert data["intent"] == "text"
+    assert data["response"] == {
+        "type": "text",
+        "content": "¡Hola! Estoy listo para ayudarte.",
+        "frames": [],
+    }
+
+
+def test_interpret_robot_command_rejects_empty_text():
+    response = client.post("/api/v1/robot/interpret", json={"text": ""})
+
+    assert response.status_code == 400
+
+
+def test_groq_interpretation_rejects_unsafe_cycle_counts():
+    with pytest.raises(ValueError):
+        GroqInterpretation(intent="blink", content="Parpadeo", count=11)
+
+    with pytest.raises(ValueError):
+        GroqInterpretation(intent="blink", content="Parpadeo", count=0)
+
+
+def test_groq_service_requests_and_validates_json_interpretation():
+    completion = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content='{"intent":"blink","content":"Parpadeo detectado","count":2}'
+                )
+            )
+        ]
+    )
+    calls = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            calls.update(kwargs)
+            return completion
+
+    service = GroqService.__new__(GroqService)
+    service.client = SimpleNamespace(
+        chat=SimpleNamespace(completions=Completions())
+    )
+    service.model = "test-model"
+
+    interpretation = service.interpret_text(RobotRequest(text="Haz dos parpadeos"))
+
+    assert interpretation.intent == "blink"
+    assert interpretation.count == 2
+    assert calls["response_format"] == {"type": "json_object"}
+    assert calls["messages"][0] == {
+        "role": "system",
+        "content": INTERPRETATION_SYSTEM_PROMPT,
+    }
+    assert calls["messages"][1]["content"] == "Haz dos parpadeos"
+    assert "preguntas" in INTERPRETATION_SYSTEM_PROMPT
+    assert "negaciones" in INTERPRETATION_SYSTEM_PROMPT
+
+
+def test_blink_frames_are_base64_encoded_from_existing_ordered_files():
+    service = GroqService.__new__(GroqService)
+    service.resource_repository = ResourceRepository()
+
+    frames = service.get_blink_frames()
+    source_frames = service.resource_repository.read_blink_frame_bytes()
+    assert [frame.name for frame in frames] == ["1.png", "2.png", "3.png"]
+    for frame, (source_name, source_bytes) in zip(frames, source_frames):
+        assert frame.format == "png"
+        assert frame.name == source_name
+        assert frame.data == base64.b64encode(source_bytes).decode("ascii")
+
+
+def test_robot_frame_response_model_validates_cycle_count():
+    with pytest.raises(ValueError):
+        RobotResponseData(
+            type="animation",
+            content="Parpadeo detectado",
+            frames=[RobotFrame(name="1.png", format="png", data="cG5n")],
+            count=11,
+        )
