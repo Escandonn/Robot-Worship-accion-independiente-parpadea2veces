@@ -1,8 +1,8 @@
-import type { ChatResponse } from "../models/chatModel";
+import type { BlinkFrame, ChatResponse } from "../models/chatModel";
 
 const API_BASE_URL =
-  import.meta.env.PUBLIC_API_BASE_URL ??
-  "https://robot-worship-accion-independiente-parpadea2veces-glt37y7wu.vercel.app/";
+  (import.meta.env.PUBLIC_API_BASE_URL ??
+    "https://robot-worship-accion-independiente.vercel.app").replace(/\/+$/, "");
 const BLINK_FRAME_NAMES = ["1.png", "2.png", "3.png"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -37,11 +37,16 @@ export async function sendChatMessage(text: string): Promise<ChatResponse> {
     throw new Error("Request not successful");
   }
 
-  if (!isRecord(json.response) || typeof json.response.content !== "string") {
+  if (!isRecord(json.response)) {
     throw new Error("Invalid response");
   }
 
   const responseData = json.response;
+  const content = responseData.content;
+  if (typeof content !== "string") {
+    throw new Error("Invalid response");
+  }
+
   if (!Array.isArray(responseData.frames)) {
     throw new Error("Invalid response frames");
   }
@@ -56,7 +61,7 @@ export async function sendChatMessage(text: string): Promise<ChatResponse> {
       intent: "text",
       response: {
         type: "text",
-        content: responseData.content,
+        content,
         frames: [],
       },
     };
@@ -71,10 +76,12 @@ export async function sendChatMessage(text: string): Promise<ChatResponse> {
     responseData.count <= 10 &&
     responseData.frames.length === BLINK_FRAME_NAMES.length
   ) {
-    const frames = responseData.frames.map((frame, index) => {
+    const frames: BlinkFrame[] = responseData.frames.map((frame, index) => {
+      const expectedName = BLINK_FRAME_NAMES[index];
       if (
+        typeof expectedName !== "string" ||
         !isRecord(frame) ||
-        frame.name !== BLINK_FRAME_NAMES[index] ||
+        frame.name !== expectedName ||
         frame.format !== "png" ||
         typeof frame.data !== "string" ||
         frame.data.length === 0
@@ -83,7 +90,7 @@ export async function sendChatMessage(text: string): Promise<ChatResponse> {
       }
 
       return {
-        name: frame.name,
+        name: expectedName,
         format: "png" as const,
         data: frame.data,
       };
@@ -94,7 +101,7 @@ export async function sendChatMessage(text: string): Promise<ChatResponse> {
       intent: "blink",
       response: {
         type: "animation",
-        content: responseData.content,
+        content,
         frames,
         count: responseData.count,
       },
