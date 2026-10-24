@@ -4,6 +4,8 @@
 
 En desarrollo local, la base URL predeterminada es `http://127.0.0.1:8000`.
 
+El backend permite solicitudes CORS desde `http://localhost:4321`, `http://127.0.0.1:4321` y el frontend desplegado en `https://robot-worship-accion-independiente-sepia.vercel.app`.
+
 ## 1. Obtener componentes del rostro inicial
 
 ### Solicitud

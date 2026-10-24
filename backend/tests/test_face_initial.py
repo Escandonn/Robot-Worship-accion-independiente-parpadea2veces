@@ -76,3 +76,27 @@ def test_get_initial_face_response_structure():
         assert isinstance(component["name"], str)
         assert isinstance(component["type"], str)
         assert isinstance(component["data"], str)
+
+
+def test_deployed_frontend_can_access_face_and_interpret_endpoints():
+    origin = "https://robot-worship-accion-independiente-sepia.vercel.app"
+
+    face_response = client.get(
+        "/api/v1/face/initial",
+        headers={"Origin": origin},
+    )
+    assert face_response.status_code == 200
+    assert face_response.headers["access-control-allow-origin"] == origin
+
+    preflight_response = client.options(
+        "/api/v1/robot/interpret",
+        headers={
+            "Origin": origin,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert preflight_response.status_code == 200
+    assert preflight_response.headers["access-control-allow-origin"] == origin
+    assert "POST" in preflight_response.headers["access-control-allow-methods"]
+    assert "content-type" in preflight_response.headers["access-control-allow-headers"]
