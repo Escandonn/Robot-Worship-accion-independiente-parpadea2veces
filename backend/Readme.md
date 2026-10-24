@@ -183,7 +183,7 @@ Frontend Astro + React
 Este microservicio backend interpreta instrucciones en lenguaje natural para determinar qué respuesta debe generar la mascota robótica WORSHIP.
 
 El servicio recibe un texto mediante una solicitud HTTP, lo procesa utilizando un modelo de inteligencia artificial de Groq y devuelve un JSON estructurado que indica el tipo de respuesta que debe ejecutar o representar el frontend Astro + React.
-
+ 
 La respuesta puede corresponder a:
 
 - **Imagen:** seleccionar o solicitar la representación de un recurso visual.
