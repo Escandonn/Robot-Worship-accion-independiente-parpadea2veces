@@ -2,7 +2,7 @@
 
 ## Alcance
 
-Este documento complementa la arquitectura existente del frontend. La funcionalidad reutiliza el flujo MVC, los componentes React actuales y el endpoint `POST /api/v1/robot/interpret`; no introduce una arquitectura alternativa ni controla hardware.
+Este documento complementa la arquitectura existente del frontend. La funcionalidad reutiliza el flujo MVC, los componentes React actuales y el endpoint `POST /api/v1/robot/interpret`; no introduce una arquitectura alternativa ni controla hardware. La base de API predeterminada es `https://robot-worship-accion-independiente.vercel.app` y puede sobrescribirse mediante `PUBLIC_API_BASE_URL`.
 
 ## Flujo de integración
 

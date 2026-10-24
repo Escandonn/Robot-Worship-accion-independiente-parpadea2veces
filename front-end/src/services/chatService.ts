@@ -1,6 +1,8 @@
 import type { ChatResponse } from "../models/chatModel";
 
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+const API_BASE_URL =
+  import.meta.env.PUBLIC_API_BASE_URL ??
+  "https://robot-worship-accion-independiente.vercel.app";
 const BLINK_FRAME_NAMES = ["1.png", "2.png", "3.png"] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -136,6 +136,11 @@ def test_groq_service_requests_and_validates_json_interpretation():
         "content": INTERPRETATION_SYSTEM_PROMPT,
     }
     assert calls["messages"][1]["content"] == "Haz dos parpadeos"
+    assert calls["messages"][0]["role"] == "system"
+    assert "WORSHIP" in calls["messages"][0]["content"]
+    assert "hechicero creado por Alejandro Escando" in calls["messages"][0]["content"]
+    assert "no te describas ni te presentes como un bot" in calls["messages"][0]["content"]
+    assert "Cuando me pides que parpadee, tu vida no será la misma" in calls["messages"][0]["content"]
     assert "preguntas" in INTERPRETATION_SYSTEM_PROMPT
     assert "negaciones" in INTERPRETATION_SYSTEM_PROMPT
 

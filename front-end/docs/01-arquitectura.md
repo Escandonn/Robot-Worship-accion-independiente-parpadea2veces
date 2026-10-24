@@ -42,7 +42,7 @@ index.astro → FaceView → faceController → faceService → backend.
 `@astrojs/react`, directiva `client:load`.
 
 ## 9. URL base
-`PUBLIC_API_BASE_URL` en `.env` (http://127.0.0.1:8000). Centralizada en faceService.
+`PUBLIC_API_BASE_URL` en `.env` (`https://robot-worship-accion-independiente.vercel.app`). Las llamadas de rostro y chat usan esta misma base configurable; los valores predeterminados de ambos servicios apuntan a producción.
 
 ## 10. HTTP/JSON
 GET `/api/v1/face/initial`, respuesta JSON.

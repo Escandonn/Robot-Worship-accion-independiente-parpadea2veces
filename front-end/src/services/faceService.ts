@@ -1,6 +1,8 @@
 import type { FaceResponse } from "../models/faceModel";
 
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+const API_BASE_URL =
+  import.meta.env.PUBLIC_API_BASE_URL ??
+  "https://robot-worship-accion-independiente.vercel.app";
 
 export async function fetchFaceInitial(): Promise<FaceResponse> {
   const response = await fetch(`${API_BASE_URL}/api/v1/face/initial`, {

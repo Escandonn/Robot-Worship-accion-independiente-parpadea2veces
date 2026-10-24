@@ -89,6 +89,8 @@ Content-Type: application/json
 
 Groq recibe el texto junto con instrucciones para clasificar la intención. La respuesta debe ser un objeto JSON validable con `intent`, `content` y `count`. La clasificación no se basa en comprobar si el texto contiene una palabra clave.
 
+Cada solicitud incluye en el mensaje de sistema la identidad permanente de WORSHIP como hechicero creado por Alejandro Escando, junto con la instrucción de no presentarse como bot o IA. La frase asociada al parpadeo es: «Cuando me pides que parpadee, tu vida no será la misma». Este contexto se aplica a todas las respuestas; el lema se usa en la respuesta cuando es pertinente, especialmente al confirmar una orden de parpadeo.
+
 ### Respuesta de animación
 
 Para una orden afirmativa clasificada como `blink`, el backend devuelve HTTP 200:
