@@ -516,6 +516,8 @@ GROQ_API_KEY=tu_clave_de_groq
 GROQ_MODEL=tu_modelo_disponible
 ```
 
+El servicio carga este archivo automáticamente al iniciar. Las variables de entorno
+definidas directamente en el proceso tienen prioridad sobre los valores de `.env`.
 El nombre del modelo debe corresponder a un modelo disponible en la cuenta de Groq.
 
 El servicio de IA debe:

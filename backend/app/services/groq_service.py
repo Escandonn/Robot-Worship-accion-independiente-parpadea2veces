@@ -1,4 +1,7 @@
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 from groq import Groq
 from app.models.robot_request import RobotRequest
 import logging
@@ -12,8 +15,9 @@ class GroqService:
     
     def __init__(self):
         """Initialize the Groq service with API key from environment."""
+        load_dotenv(Path(__file__).resolve().parents[2] / ".env")
         self.api_key = os.getenv("GROQ_API_KEY")
-        self.model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+        self.model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
         
         if not self.api_key:
             logger.warning("GROQ_API_KEY not set in environment variables")
