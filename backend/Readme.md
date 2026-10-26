@@ -50,12 +50,32 @@ GET /api/v1/face/initial
 }
 ```
 
+## Detección facial en una imagen
+
+El endpoint `POST /api/v1/face/validate` recibe una imagen en el campo
+multipart `file` y devuelve si el clasificador Haar Cascade de OpenCV encontró
+uno o más rostros frontales. Admite JPEG, PNG y WebP, con un límite inicial de
+5 MiB por archivo. El límite se puede cambiar con la variable de entorno
+`MAX_IMAGE_SIZE_BYTES`.
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/face/validate \
+  -F "file=@rostro.jpg"
+```
+
+La respuesta incluye `success`, `is_face`, `faces_count` y `message`. Los
+errores de entrada incluyen `success: false` y un código y mensaje dentro de
+`error`. Las imágenes se procesan en memoria y no se guardan por la aplicación.
+La detección Haar puede producir falsos positivos y falsos negativos; `false`
+solo indica que el detector no encontró un rostro con sus parámetros actuales.
+
 ## 2. Tecnologías
 
 - **Python:** lenguaje principal
 - **FastAPI:** API REST
 - **Pydantic:** validación de solicitudes y respuestas
 - **Uvicorn:** servidor de desarrollo
+- **OpenCV headless:** decodificación de imágenes y detección facial
 
 ## 3. Arquitectura MVC
 
