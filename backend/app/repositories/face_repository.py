@@ -1,4 +1,3 @@
-import os
 import base64
 from typing import List, Dict
 from pathlib import Path
@@ -7,14 +6,18 @@ from pathlib import Path
 class FaceRepository:
     """Repository for accessing facial component files."""
     
-    def __init__(self, base_path: str = "app/assets/emociones"):
+    def __init__(self, base_path: str | Path | None = None):
         """
-        Initialize the repository with the base path to emociones assets.
+        Initialize the repository with the path to emociones assets.
         
         Args:
-            base_path: Relative path to the emociones directory
+            base_path: Optional path override for the emociones directory
         """
-        self.base_path = Path(base_path)
+        self.base_path = (
+            Path(base_path)
+            if base_path is not None
+            else Path(__file__).resolve().parents[1] / "assets" / "emociones"
+        )
         self.components = [
             {"name": "boca", "subdir": "boca", "filename": "boca.png"},
             {"name": "nariz", "subdir": "nariz", "filename": "nariz.png"},

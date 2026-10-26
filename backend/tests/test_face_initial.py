@@ -54,6 +54,16 @@ def test_get_initial_face_component_data_not_empty():
     for component in data["components"]:
         assert len(component["data"]) > 0, f"Component {component['name']} has empty data"
 
+
+def test_get_initial_face_is_independent_of_working_directory(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+
+    response = client.get("/api/v1/face/initial")
+
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+
+
 def test_get_initial_face_response_structure():
     """Test that the response matches the expected structure."""
     response = client.get("/api/v1/face/initial")
