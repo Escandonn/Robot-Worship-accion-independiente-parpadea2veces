@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/v1/face/annotate",
+      "destination": "https://backend-tau-seven-48jsbet9kg.vercel.app/api/v1/face/annotate"
+    }
+  ]
+}

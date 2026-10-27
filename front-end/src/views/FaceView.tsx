@@ -64,9 +64,9 @@ export function FaceView() {
             <FaceRenderer components={data.components} animation={animation} />
             <div className="face-message">
               <h2 className="face-message-title">
-                Parpadea <span className="face-message-highlight">2 veces</span>.
+                Tu rostro, <span className="face-message-highlight">tu señal</span>.
               </h2>
-              <p className="face-message-subtitle">Es mi primera acción autónoma.</p>
+              <p className="face-message-subtitle">WORSHIP ya puede verte y dejar su marca.</p>
             </div>
           </>
         )}
