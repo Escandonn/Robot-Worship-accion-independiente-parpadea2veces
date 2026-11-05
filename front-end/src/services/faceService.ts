@@ -101,7 +101,7 @@ export async function fetchFaceInitial(): Promise<FaceResponse> {
     throw new Error("Request not successful");
   }
 
-  if (!Array.isArray(data.components) || data.components.length !== 4) {
+  if (!Array.isArray(data.components) || data.components.length !== 5) {
     throw new Error("Missing components");
   }
 

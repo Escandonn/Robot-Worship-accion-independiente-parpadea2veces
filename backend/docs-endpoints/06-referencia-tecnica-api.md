@@ -51,12 +51,19 @@ Host: 127.0.0.1:8000
       "name": "ojo-izquierdo",
       "type": "image/png",
       "data": "<BASE64_PNG>"
+    },
+    {
+      "name": "lunar",
+      "type": "image/png",
+      "data": "<BASE64_PNG>"
     }
   ]
 }
 ```
 
 `data` contiene los bytes reales del PNG codificados en Base64. Las rutas y nombres de archivo se definen en `FaceRepository`.
+El componente `lunar` es una imagen estática e independiente de los fotogramas
+que devuelve el endpoint de interpretación para el parpadeo.
 
 ### Errores
 
@@ -161,7 +168,8 @@ La intención permitida es `blink` o `text`. El tipo de respuesta debe correspon
 
 ## Archivos de imagen
 
-- Rostro inicial: `app/assets/emociones/` según el catálogo de `FaceRepository`.
+- Rostro inicial: `app/assets/emociones/` según el catálogo de `FaceRepository`;
+  incluye boca, nariz, ojos y el logotipo `lunar`.
 - Fotogramas de parpadeo: `app/assets/ojos/1.png`, `app/assets/ojos/2.png` y `app/assets/ojos/3.png`.
 - Las rutas de fotogramas se resuelven desde la ubicación del módulo del repositorio, no dependen de una ruta absoluta específica del equipo.
 

@@ -12,6 +12,12 @@ export const faceLayout: Record<string, FaceLayoutItem> = {
     width: 72,
     height: 62,
   },
+  lunar: {
+    x: 38,
+    y: 6,
+    width: 24,
+    height: 12,
+  },
   "ojo-derecho": {
     x: 44,
     y: 12,

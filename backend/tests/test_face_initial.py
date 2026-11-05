@@ -21,10 +21,16 @@ def test_get_initial_face_success():
     assert data["success"] == True
     assert "components" in data
     assert isinstance(data["components"], list)
-    assert len(data["components"]) == 4  # We have 4 components
+    assert len(data["components"]) == 5  # Four facial parts and the lunar logo
     
     # Check each component has required fields
-    expected_components = ["boca", "nariz", "ojo-derecho", "ojo-izquierdo"]
+    expected_components = [
+        "boca",
+        "nariz",
+        "ojo-derecho",
+        "ojo-izquierdo",
+        "lunar",
+    ]
     found_components = []
     
     for component in data["components"]:

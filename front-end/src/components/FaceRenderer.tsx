@@ -57,6 +57,7 @@ export function FaceRenderer({ components, animation }: Props) {
   const nariz = find("nariz");
   const ojoDerecho = find("ojo-derecho");
   const ojoIzquierdo = find("ojo-izquierdo");
+  const lunar = find("lunar");
 
   const imageSource = (component: FaceComponent | undefined) => {
     if (!component) return undefined;
@@ -97,6 +98,15 @@ export function FaceRenderer({ components, animation }: Props) {
           alt=""
           aria-hidden="true"
           style={buildStyle("ojo-derecho")}
+        />
+      )}
+      {lunar && (
+        <img
+          className="face-iframe face-lunar"
+          src={`data:${lunar.type};base64,${lunar.data}`}
+          alt=""
+          aria-hidden="true"
+          style={buildStyle("lunar")}
         />
       )}
       {activeFrame?.name === "3.png" && (

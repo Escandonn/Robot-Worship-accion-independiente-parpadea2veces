@@ -22,7 +22,8 @@ class FaceRepository:
             {"name": "boca", "subdir": "boca", "filename": "boca.png"},
             {"name": "nariz", "subdir": "nariz", "filename": "nariz.png"},
             {"name": "ojo-derecho", "subdir": "ojo-derecho", "filename": "ojo-derecho.png"},
-            {"name": "ojo-izquierdo", "subdir": "ojo-izquierdo", "filename": "ojo-izquierdo.png"}
+            {"name": "ojo-izquierdo", "subdir": "ojo-izquierdo", "filename": "ojo-izquierdo.png"},
+            {"name": "lunar", "subdir": "lunar", "filename": "lunar.png"}
         ]
     
     def get_component_path(self, component_name: str) -> Path:
